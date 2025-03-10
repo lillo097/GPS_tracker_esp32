@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time GPS Tracker</title>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.13.0/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.13.0/mapbox-gl.css" rel="stylesheet" />
+
+    <!-- Icone per il segnalibro su iPhone -->
+    <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="icon-152.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="icon-120.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="icon-76.png">
+
+    <!-- Abilitare la modalità standalone -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="GPS Tracker">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time GPS Tracker</title>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.13.0/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.13.0/mapbox-gl.css" rel="stylesheet" />
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f0f0f0;
+            position: relative;
+        }
+        #map {
+            width: 90vw;
+            height: 75vh; /* Altezza al 75% della finestra */
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 1;
+        }
+        #info {
+            width: 70vw;
+            margin-top: 10px;
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            color: #333;
+            background: #fff;
+            padding: 10px 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        #info strong {
+            display: inline-block;
+            width: 100px;
+        }
+        .user-location-circle {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: blue;
+            border: 2px solid blue;
+            box-sizing: border-box;
+            box-shadow: 0 0 15px 5px rgba(0, 0, 255, 0.5);
+        }
+        #last-update-box {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            color: white;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 8px 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+        /* Stile per il pulsante di ricentra */
+        #recenter-button {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.2s, transform 0.2s;
+            z-index: 1000;
+        }
+        #recenter-button:hover {
+            background-color: #f0f0f0;
+            transform: scale(1.1);
+        }
+        #recenter-button svg {
+            fill: #333;
+            transition: fill 0.2s;
+        }
+        #recenter-button:hover svg {
+            fill: #007AFF;
+        }
+        /* Stile per l'icona della batteria */
+        #battery-icon {
+            position: absolute;
+            top: 10px;
+            right: 1px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            padding: 6px 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            cursor: pointer; /* Cambia il cursore per indicare che è cliccabile */
+        }
+        #battery-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+        #battery-icon .battery-level {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            color: #333;
+        }
+        /* Stile per la modale */
+        #battery-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            width: 300px;
+            text-align: center;
+        }
+        #battery-modal h3 {
+            margin-top: 0;
+        }
+        #battery-modal button {
+            margin-top: 10px;
+            padding: 8px 16px;
+            background-color: #007AFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #battery-modal button:hover {
+            background-color: #005bb5;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+
+    <!-- Last Update Box centrato in alto -->
+    <div id="last-update-box">Last Update: <span id="last_update">Loading...</span></div>
+
+    <!-- Icona della batteria in alto a destra -->
+    <div id="battery-icon">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17 6h-2V4h-2v2h-2V4H9v2H7v14h10V6zm-4 10h-2v-4h2v4z"/>
+        </svg>
+        <div class="battery-level">
+            <span id="battery-percent">Loading...</span>%
+        </div>
+    </div>
+
+    <!-- Pulsante di ricentra -->
+    <button id="recenter-button">
+        <svg viewBox="0 0 24 24" width="24" height="24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z" fill="currentColor"/>
+        </svg>
+    </button>
+
+    <!-- Modale per le informazioni sulla batteria -->
+    <div id="battery-modal">
+        <h3>Informazioni Batteria</h3>
+        <p>Percentuale: <span id="modal-battery-percent"></span>%</p>
+        <p>Tensione media: <span id="modal-avg-voltage"></span> V</p>
+        <p>Corrente media: <span id="modal-avg-current"></span> A</p>
+        <button onclick="document.getElementById('battery-modal').style.display = 'none';">Chiudi</button>
+    </div>
+
+    <div id="info">
+        <div><strong>Latitude:</strong> <span id="latitude">Loading...</span></div>
+        <div><strong>Longitude:</strong> <span id="longitude">Loading...</span></div>
+        <div><strong>Speed:</strong> <span id="speed">Loading...</span> km/h</div>
+        <div><strong>Course:</strong> <span id="course">Loading...</span>°</div>
+        <div><strong>Altitude:</strong> <span id="altitude">Loading...</span> m</div>
+        <div><strong>Satellites:</strong> <span id="satellites">Loading...</span></div>
+    </div>
+
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1IjoibGlsbG8wOTciLCJhIjoiY20yOTZpamprMDB1djJqczd5ZzdlazR0YyJ9.Sro2dK6MfaSyBeZzBXmDSw';
+
+        const map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v11',
+            center: [9.1900, 45.4642], // Coordinate di Milano
+            zoom: 11 // Zoom iniziale
+        });
+
+        // Aggiungi i controlli predefiniti di Mapbox (zoom e bussola)
+        map.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
+
+        let trackerMarker = new mapboxgl.Marker().setLngLat([0, 0]).addTo(map);
+        let lastTrackerCoordinates = [0, 0];
+
+        // Aggiungi funzionalità al pulsante di ricentra
+        document.getElementById('recenter-button').addEventListener('click', () => {
+            if (lastTrackerCoordinates[0] !== 0 && lastTrackerCoordinates[1] !== 0) {
+                map.setCenter(lastTrackerCoordinates); // Centra la mappa sulle coordinate correnti
+                map.setZoom(15); // Imposta uno zoom ravvicinato (opzionale)
+            } else {
+                alert("Nessuna coordinata disponibile.");
+            }
+        });
+
+        // Aggiungi funzionalità al click sull'icona della batteria
+        document.getElementById('battery-icon').addEventListener('click', () => {
+            const batteryPercent = document.getElementById('battery-percent').textContent;
+            const avgVoltage = document.getElementById('battery-icon').dataset.avgVoltage;
+            const avgCurrent = document.getElementById('battery-icon').dataset.avgCurrent;
+
+            // Aggiorna il contenuto della modale
+            document.getElementById('modal-battery-percent').textContent = batteryPercent;
+            document.getElementById('modal-avg-voltage').textContent = avgVoltage;
+            document.getElementById('modal-avg-current').textContent = avgCurrent;
+
+            // Mostra la modale
+            document.getElementById('battery-modal').style.display = 'block';
+        });
+
+        let userMarkerElement = document.createElement('div');
+        userMarkerElement.className = 'user-location-circle';
+        let userMarker = new mapboxgl.Marker({
+            element: userMarkerElement
+        }).setLngLat([0, 0]).addTo(map);
+
+        async function updateCoordinates() {
+            try {
+                const response = await fetch('/get_coordinates');
+                const data = await response.json();
+
+                const newTrackerLngLat = [parseFloat(data.longitude), parseFloat(data.latitude)];
+
+                if (newTrackerLngLat[0] !== lastTrackerCoordinates[0] || newTrackerLngLat[1] !== lastTrackerCoordinates[1]) {
+                    trackerMarker.setLngLat(newTrackerLngLat);
+                    lastTrackerCoordinates = newTrackerLngLat;
+                }
+
+                // Aggiorna i dati della batteria
+                document.getElementById('battery-percent').textContent = Math.round(data.battery_percentage || 0);
+                document.getElementById('battery-icon').dataset.avgVoltage = data.avg_voltage || "N/A";
+                document.getElementById('battery-icon').dataset.avgCurrent = data.avg_current || "N/A";
+
+                // Aggiorna gli altri dati
+                document.getElementById('latitude').textContent = data.latitude || "N/A";
+                document.getElementById('longitude').textContent = data.longitude || "N/A";
+                document.getElementById('speed').textContent = (data.speed_over_ground || 0).toFixed(2);
+                document.getElementById('course').textContent = (data.course_over_ground || 0).toFixed(2);
+                document.getElementById('altitude').textContent = (data.altitude || 0).toFixed(2);
+                document.getElementById('satellites').textContent = data.num_satellites || "N/A";
+                document.getElementById('last_update').textContent = data.last_update || "N/A";
+            } catch (error) {
+                console.error('Error fetching tracker data:', error);
+            }
+            requestAnimationFrame(updateCoordinates);
+        }
+
+        function trackUserLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.watchPosition(
+                    (position) => {
+                        const userLngLat = [position.coords.longitude, position.coords.latitude];
+                        userMarker.setLngLat(userLngLat);
+                    },
+                    (error) => {
+                        console.error('Error getting user location:', error);
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        maximumAge: 0,
+                        timeout: 5000
+                    }
+                );
+            } else {
+                console.error('Geolocation is not supported by this browser.');
+            }
+        }
+
+        updateCoordinates();
+        trackUserLocation();
+    </script>
+</body>
+</html>

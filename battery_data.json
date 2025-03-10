@@ -1,0 +1,161 @@
+[
+    {
+        "avg_voltage": 94,
+        "avg_current": 0.34,
+        "corrente": 0.34,
+        "data_ora": "2025-02-04 13:27:56"
+    },
+    {
+        "avg_voltage": 95,
+        "avg_current": 0.26,
+        "corrente": 0.26,
+        "data_ora": "2025-02-04 13:46:20"
+    },
+    {
+        "avg_voltage": 88,
+        "avg_current": 0.28,
+        "voltage": 4.06,
+        "current": 0.28,
+        "data_ora": "2025-02-04 19:00:47"
+    },
+    {
+        "avg_voltage": 88,
+        "avg_current": 0.3,
+        "voltage": 4.06,
+        "current": 0.3,
+        "data_ora": "2025-02-04 19:08:13"
+    },
+    {
+        "avg_voltage": 87,
+        "avg_current": 0.25,
+        "voltage": 4.06,
+        "current": 0.25,
+        "data_ora": "2025-02-04 19:16:33"
+    },
+    {
+        "avg_voltage": 87,
+        "avg_current": 0.31,
+        "voltage": 4.05,
+        "current": 0.31,
+        "data_ora": "2025-02-04 19:24:53"
+    },
+    {
+        "avg_voltage": 87,
+        "avg_current": 0.26,
+        "voltage": 4.05,
+        "current": 0.26,
+        "data_ora": "2025-02-04 19:33:13"
+    },
+    {
+        "avg_voltage": 87,
+        "avg_current": 0.27,
+        "voltage": 4.05,
+        "current": 0.27,
+        "data_ora": "2025-02-04 19:41:33"
+    },
+    {
+        "avg_voltage": 87,
+        "avg_current": 0.24,
+        "voltage": 4.04,
+        "current": 0.24,
+        "data_ora": "2025-02-04 19:49:53"
+    },
+    {
+        "avg_voltage": 86,
+        "avg_current": 0.25,
+        "voltage": 4.04,
+        "current": 0.25,
+        "data_ora": "2025-02-04 19:58:13"
+    },
+    {
+        "avg_voltage": 86,
+        "avg_current": 0.25,
+        "voltage": 4.04,
+        "current": 0.25,
+        "data_ora": "2025-02-04 20:06:33"
+    },
+    {
+        "avg_voltage": 85,
+        "avg_current": 0.27,
+        "voltage": 4.03,
+        "current": 0.27,
+        "data_ora": "2025-02-04 20:14:53"
+    },
+    {
+        "avg_voltage": 85,
+        "avg_current": 0.25,
+        "voltage": 4.03,
+        "current": 0.25,
+        "data_ora": "2025-02-04 20:23:13"
+    },
+    {
+        "avg_voltage": 85,
+        "avg_current": 0.27,
+        "voltage": 4.02,
+        "current": 0.27,
+        "data_ora": "2025-02-04 20:31:33"
+    },
+    {
+        "avg_voltage": 85,
+        "avg_current": 0.25,
+        "voltage": 4.02,
+        "current": 0.25,
+        "data_ora": "2025-02-04 20:39:53"
+    },
+    {
+        "avg_voltage": 84,
+        "avg_current": 0.25,
+        "voltage": 4.02,
+        "current": 0.25,
+        "data_ora": "2025-02-04 20:48:13"
+    },
+    {
+        "avg_voltage": 83,
+        "avg_current": 0.26,
+        "voltage": 4.01,
+        "current": 0.26,
+        "data_ora": "2025-02-04 20:56:33"
+    },
+    {
+        "avg_voltage": 83,
+        "avg_current": 0.28,
+        "voltage": 4.01,
+        "current": 0.28,
+        "data_ora": "2025-02-04 21:04:53"
+    },
+    {
+        "avg_voltage": 83,
+        "avg_current": 0.27,
+        "voltage": 4.0,
+        "current": 0.27,
+        "data_ora": "2025-02-04 21:13:13"
+    },
+    {
+        "avg_voltage": 83,
+        "avg_current": 0.27,
+        "voltage": 4.0,
+        "current": 0.27,
+        "data_ora": "2025-02-04 21:21:33"
+    },
+    {
+        "avg_voltage": 82,
+        "avg_current": 0.28,
+        "voltage": 3.99,
+        "current": 0.28,
+        "data_ora": "2025-02-04 21:29:53"
+    },
+    {
+        "avg_voltage": 82,
+        "avg_current": 0.27,
+        "voltage": 3.99,
+        "current": 0.27,
+        "data_ora": "2025-02-04 21:38:13"
+    },
+    {
+        "avg_voltage": 81,
+        "avg_current": 0.27,
+        "voltage": 3.98,
+        "current": 0.27,
+        "data_ora": "2025-02-04 21:46:33"
+    }
+]
